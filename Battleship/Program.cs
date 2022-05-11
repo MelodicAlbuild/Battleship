@@ -1,3 +1,10 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using MelodicAlbuild.Games.Battleship.lib;
 
-Console.WriteLine("Hello, World!");
+namespace MelodicAlbuild.Games.Battleship {
+    class Program {
+        static void Main(string[] args) {
+            Console.WriteLine("Hello World");
+            GenerateBoard.Generate(5, 5, 1);
+        }
+    }
+}
