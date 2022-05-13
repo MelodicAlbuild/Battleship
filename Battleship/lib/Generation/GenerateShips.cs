@@ -16,6 +16,11 @@ public class GenerateShips
 
     public void AddShipsToBoard(Board board)
     {
+        ships.Clear();
+        ships.Add(new Ship(ShipType.Battleship, 4));
+        ships.Add(new Ship(ShipType.Cruiser, 3));
+        ships.Add(new Ship(ShipType.Destroyer, 2));
+        
         Random random = new Random();
         List<BoardPosition> positions = board.GetBoardPositions();
         try
@@ -24,7 +29,8 @@ public class GenerateShips
             {
                 // 1 = Left, 2 = Up, 3 = Right, 4 = Down
                 int direction = random.Next(1, 5);
-                PlaceShip(board, random, ship, direction, positions);
+                int index = random.Next(positions.Count);
+                PlaceShip(board, random, ship, direction, positions, index);
             }
         }
         catch (Exception e)
@@ -33,20 +39,20 @@ public class GenerateShips
             {
                 // 1 = Left, 2 = Up, 3 = Right, 4 = Down
                 int direction = random.Next(1, 5);
-                PlaceShip(board, random, ship, direction, positions);
+                int index = random.Next(positions.Count);
+                PlaceShip(board, random, ship, direction, positions, index);
             }
         }
         
         board.UpdateBoardPositions(positions);
     }
 
-    private void PlaceShip(Board board, Random random, Ship ship, int direction, List<BoardPosition> positions)
+    private void PlaceShip(Board board, Random random, Ship ship, int direction, List<BoardPosition> positions, int index)
     {
         int dir = direction;
-        int index = random.Next(positions.Count);
+        Console.WriteLine(dir + " " + positions[index]);
         positions[index].UpdatePositionStatus(PositionStatus.Ship);
         positions[index].UpdatePositionShip(ship);
-
         List<BoardPosition> lastMoves = new List<BoardPosition>();
         lastMoves.Add(positions[index]);
         
@@ -57,7 +63,7 @@ public class GenerateShips
                 case 1:
                     try
                     {
-                        if (IsValidShipPlacement(board, positions[index - (i + 1)], 1))
+                        if (IsValidShipPlacement(board, positions[index - (i + 1)], 1, lastMoves))
                         {
                             positions[index - (i + 1)].UpdatePositionStatus(PositionStatus.Ship);
                             positions[index - (i + 1)].UpdatePositionShip(ship);
@@ -72,7 +78,7 @@ public class GenerateShips
                             }
                             lastMoves.Clear();
                             dir = random.Next(1, 5);
-                            PlaceShip(board, random, ship, dir, positions);
+                            PlaceShip(board, random, ship, dir, positions, random.Next(positions.Count));
                         }
                     }
                     catch (Exception e)
@@ -84,13 +90,13 @@ public class GenerateShips
                         }
                         lastMoves.Clear();
                         dir = random.Next(1, 5);
-                        PlaceShip(board, random, ship, dir, positions);
+                        PlaceShip(board, random, ship, dir, positions, random.Next(positions.Count));
                     }
                     break;
                 case 2:
                     try
                     {
-                        if (IsValidShipPlacement(board, positions[index - ((i + 1) * board.GetX())], 2))
+                        if (IsValidShipPlacement(board, positions[index - ((i + 1) * board.GetX())], 2, lastMoves))
                         {
                             positions[index - ((i + 1) * board.GetX())].UpdatePositionStatus(PositionStatus.Ship);
                             positions[index - ((i + 1) * board.GetX())].UpdatePositionShip(ship);   
@@ -105,7 +111,7 @@ public class GenerateShips
                             }
                             lastMoves.Clear();
                             dir = random.Next(1, 5);
-                            PlaceShip(board, random, ship, dir, positions);
+                            PlaceShip(board, random, ship, dir, positions, random.Next(positions.Count));
                         }
                     }
                     catch (Exception e)
@@ -117,13 +123,13 @@ public class GenerateShips
                         }
                         lastMoves.Clear();
                         dir = random.Next(1, 5);
-                        PlaceShip(board, random, ship, dir, positions);
+                        PlaceShip(board, random, ship, dir, positions, random.Next(positions.Count));
                     }
                     break;
                 case 3:
                     try
                     {
-                        if (IsValidShipPlacement(board, positions[index + (i + 1)], 3))
+                        if (IsValidShipPlacement(board, positions[index + (i + 1)], 3, lastMoves))
                         {
                             positions[index + (i + 1)].UpdatePositionStatus(PositionStatus.Ship);
                             positions[index + (i + 1)].UpdatePositionShip(ship);   
@@ -138,7 +144,7 @@ public class GenerateShips
                             }
                             lastMoves.Clear();
                             dir = random.Next(1, 5);
-                            PlaceShip(board, random, ship, dir, positions);
+                            PlaceShip(board, random, ship, dir, positions, random.Next(positions.Count));
                         }
                     }
                     catch (Exception e)
@@ -150,13 +156,13 @@ public class GenerateShips
                         }
                         lastMoves.Clear();
                         dir = random.Next(1, 5);
-                        PlaceShip(board, random, ship, dir, positions);
+                        PlaceShip(board, random, ship, dir, positions, random.Next(positions.Count));
                     }
                     break;
                 case 4:
                     try
                     {
-                        if (IsValidShipPlacement(board, positions[index + ((i + 1) * board.GetX())], 4))
+                        if (IsValidShipPlacement(board, positions[index + ((i + 1) * board.GetX())], 4, lastMoves))
                         {
                             positions[index + ((i + 1) * board.GetX())].UpdatePositionStatus(PositionStatus.Ship);
                             positions[index + ((i + 1) * board.GetX())].UpdatePositionShip(ship);   
@@ -171,7 +177,7 @@ public class GenerateShips
                             }
                             lastMoves.Clear();
                             dir = random.Next(1, 5);
-                            PlaceShip(board, random, ship, dir, positions);
+                            PlaceShip(board, random, ship, dir, positions, random.Next(positions.Count));
                         }
                     }
                     catch (Exception e)
@@ -183,14 +189,14 @@ public class GenerateShips
                         }
                         lastMoves.Clear();
                         dir = random.Next(1, 5);
-                        PlaceShip(board, random, ship, dir, positions);
+                        PlaceShip(board, random, ship, dir, positions, random.Next(positions.Count));
                     }
                     break;
             }
         }
     }
     
-    public bool IsValidShipPlacement(Board board, BoardPosition pos, int dir)
+    private bool IsValidShipPlacement(Board board, BoardPosition pos, int dir, List<BoardPosition> lastMoves)
     {
         if (pos.GetShip() != null)
         {
@@ -208,6 +214,11 @@ public class GenerateShips
             return false;
         }
 
+        if (dir is 1 or 3 && pos.GetLetterPosition() != lastMoves[^1].GetLetterPosition())
+        {
+            return false;
+        }
+        
         return true;
     }
 }

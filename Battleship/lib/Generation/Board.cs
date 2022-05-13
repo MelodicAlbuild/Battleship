@@ -86,6 +86,11 @@ namespace MelodicAlbuild.Games.Battleship.lib.Generation {
         public void UpdateBoardPositions(List<BoardPosition> positions)
         {
             playerBoardStatus = positions;
+            boardPositions.Clear();
+            foreach (var position in positions)
+            {
+                boardPositions.Add(new PositionIdentifier(position.GetNumPosition(), position.GetLetterPosition()), position);
+            }
         }
         
         public Dictionary<PositionIdentifier, BoardPosition> GetBoardPositionsDictionary()
